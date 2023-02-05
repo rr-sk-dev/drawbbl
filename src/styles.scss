@@ -1,1 +1,23 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  font-family: 'Shadows Into Light', cursive;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+
+  --color: #fff;
+  --bg-color: rgb(76, 90, 212);
+  --primary: #009578;
+  --secondary: #845695;
+}
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--color);
+}
