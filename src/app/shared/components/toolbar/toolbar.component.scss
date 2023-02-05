@@ -1,0 +1,20 @@
+.container {
+  background-color: var(--primary);
+
+  min-height: 5vh;
+
+  position: relative;
+  padding: 10px;
+}
+
+h1 {
+  text-align: center;
+}
+
+.actions {
+  position: absolute;
+
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
