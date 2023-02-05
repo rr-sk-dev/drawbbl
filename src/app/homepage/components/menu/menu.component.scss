@@ -1,0 +1,51 @@
+.container {
+  width: 90vw;
+  margin: 0 auto;
+
+  display: grid;
+  gap: 10px;
+
+  padding: 10px;
+
+  background-color: #6b6dd8;
+}
+
+input {
+  width: 100%;
+}
+
+.avatar {
+  min-height: 10vh;
+  padding: 10px;
+
+  border: 2px solid greenyellow;
+}
+
+.actions {
+  min-height: 8vh;
+
+  display: grid;
+  gap: 5px;
+}
+
+.play-btn {
+  min-height: 5vh;
+  background-color: var(--primary);
+}
+
+.new-room-btn {
+  min-height: 4vh;
+  background-color: var(--secondary);
+}
+
+.play-btn:hover,
+.new-room-btn:hover {
+  opacity: 0.9;
+}
+
+.play-btn:disabled,
+.new-room-btn:disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+  background-color: lightgray;
+}

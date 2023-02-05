@@ -4,12 +4,45 @@
   line-height: 24px;
   font-weight: 400;
 
+  // Colors
   --color: #fff;
-  --bg-color: rgb(76, 90, 212);
-  --primary: #009578;
-  --secondary: #845695;
-}
 
+  // Background Colors
+  --bg-color: rgb(76, 90, 212);
+  --primary: #5ff478;
+  --secondary: #d179f1;
+
+  // HTML Elements
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    text-align: center;
+  }
+
+  input {
+    border: none;
+    border-radius: 5px;
+    color: #000;
+    padding: 10px;
+    height: 35px;
+  }
+
+  button {
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 22px;
+    font-weight: bold;
+  }
+
+  button,
+  i {
+    cursor: pointer;
+  }
+}
 
 * {
   margin: 0;
@@ -20,4 +53,6 @@
 body {
   background-color: var(--bg-color);
   color: var(--color);
+
+  // overflow: hidden;
 }

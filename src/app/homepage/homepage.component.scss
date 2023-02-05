@@ -1,8 +1,21 @@
 .container {
-  border: 2px solid black;
-
   min-height: 100vh;
   min-height: 100dvh;
 
   display: grid;
+  grid-template-rows: 2fr 3fr 1fr;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.header {
+  text-align: center;
+}
+
+.footer {
+  padding: 10px;
 }

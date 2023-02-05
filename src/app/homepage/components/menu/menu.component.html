@@ -1,0 +1,30 @@
+<div class="container">
+  <div class="inputs">
+    <input
+      type="text"
+      name="username"
+      id="username"
+      placeholder="Enter your name"
+      [(ngModel)]="username"
+    />
+  </div>
+  <div class="avatar">
+    <h2>some avatar would be here</h2>
+  </div>
+  <div class="actions">
+    <button
+      [disabled]="username.length === 0"
+      class="play-btn"
+      (click)="onPlayClick()"
+    >
+      Play!
+    </button>
+    <button
+      [disabled]="username.length === 0"
+      class="new-room-btn"
+      (click)="onCreatePrivateRoomClick()"
+    >
+      Create Private Room
+    </button>
+  </div>
+</div>

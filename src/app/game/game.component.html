@@ -1,1 +1,9 @@
 <p>game works!</p>
+
+<div *ngIf="game">
+  {{ game.id }}
+
+  <div *ngFor="let user of game.users">
+    {{ user }}
+  </div>
+</div>
