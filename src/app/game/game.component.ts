@@ -10,14 +10,15 @@ import { GamesService } from './games.service';
   styleUrls: ['./game.component.scss'],
 })
 export class GameComponent implements OnInit, OnDestroy {
+  private ctx!: CanvasRenderingContext2D;
+
+  gameSubscription$!: Subscription;
+  game: Game = { id: 'work in progress', users: [] };
+
   constructor(
     private route: ActivatedRoute,
     private gamesService: GamesService
   ) {}
-
-  game!: Game;
-
-  gameSubscription$!: Subscription;
 
   ngOnInit() {
     this.gameSubscription$ = this.gamesService

@@ -1,0 +1,13 @@
+.container {
+  background-color: lightskyblue;
+  max-width: 100vw;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.actions {
+  background-color: lightgrey;
+  flex-grow: 1;
+}

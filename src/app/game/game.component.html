@@ -1,9 +1,11 @@
-<p>game works!</p>
-
-<div *ngIf="game">
-  {{ game.id }}
-
-  <div *ngFor="let user of game.users">
-    {{ user }}
+<div class="container" *ngIf="game">
+  <div class="header">
+    <h1>{{ game.id }}</h1>
+    <i class="fa-solid fa-gear icon"></i>
+  </div>
+  <app-draw></app-draw>
+  <div class="footer">
+    <app-players></app-players>
+    <app-chat></app-chat>
   </div>
 </div>

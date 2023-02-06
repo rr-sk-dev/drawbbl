@@ -1,0 +1,25 @@
+.container {
+  min-height: 100vh;
+  min-height: 100dvh;
+
+  display: grid;
+  grid-template-rows: 1fr 6fr 6fr;
+}
+
+.header {
+  position: relative;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+i {
+  position: absolute;
+  right: 1em;
+}
+
+.footer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
