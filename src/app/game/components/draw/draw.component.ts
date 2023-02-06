@@ -15,134 +15,166 @@ export class DrawComponent implements AfterViewInit {
   @ViewChild('canvas', { static: true })
   canvasRef!: ElementRef<HTMLCanvasElement>;
 
-  @HostListener('window:resize', ['$event'])
-  resizeCanvas(event: any) {
-    // Dimensions
-    this.setCanvasDefaultDimensions();
-
-    // Default Styles
-    this.setCanvasDefaultStyles();
+  @HostListener('window:resize')
+  resizeCanvas() {
+    this.resetCanvasDimension();
+    this.resetCanvasStyles();
   }
 
-  ngAfterViewInit(): void {
-    this.setupCanvas();
-  }
+  private context!: CanvasRenderingContext2D;
 
-  isDrawing = false;
-
-  drawSettings = {
-    backgroundColor: 'white',
+  private defaultSettings = {
+    bgColor: 'white',
     color: 'black',
     penWidth: 2,
+    lineCap: 'round',
   };
 
-  restoreArr: any = [];
-  index = -1;
+  private isDrawing = false;
 
-  private parentElem!: HTMLDivElement;
-  private ctx!: CanvasRenderingContext2D;
+  private restoreArr: any = [];
+  private index = -1;
 
-  private setupCanvas = () => {
-    // Parent Element
-    this.parentElem = this.canvasRef.nativeElement
-      .parentElement as HTMLDivElement;
+  ngAfterViewInit(): void {
+    this.render();
+  }
 
+  private render = () => {
     // 2D Context
-    this.ctx = this.canvasRef?.nativeElement.getContext('2d', {
+    this.context = this.canvasRef.nativeElement.getContext('2d', {
       willReadFrequently: true,
     }) as CanvasRenderingContext2D;
 
-    // Dimensions
-    this.setCanvasDefaultDimensions();
+    // Default Dimensions
+    this.resetCanvasDimension();
 
     // Default Styles
-    this.setCanvasDefaultStyles();
+    this.resetCanvasStyles();
 
     // Event Listeners
     this.registerEventListeners();
   };
 
-  private setCanvasDefaultDimensions = () => {
-    const parentHeight = this.parentElem.offsetHeight;
-    const parentWidth = this.parentElem.offsetWidth;
-
-    const offsetY = this.canvasRef.nativeElement.getBoundingClientRect().top;
-    const offsetX = this.canvasRef.nativeElement.getBoundingClientRect().left;
+  /**
+   * Resets the canvas height and width.
+   */
+  private resetCanvasDimension = () => {
+    // Height
+    this.canvasRef.nativeElement.height =
+      this.getParentDimensions(this.canvasRef.nativeElement).height -
+      this.getElementPosition(this.canvasRef.nativeElement).y;
 
     // Width
-    this.canvasRef.nativeElement.width = parentWidth - offsetX;
-
-    // Height
-    this.canvasRef.nativeElement.height = parentHeight - offsetY;
+    this.canvasRef.nativeElement.width =
+      this.getParentDimensions(this.canvasRef.nativeElement).width -
+      this.getElementPosition(this.canvasRef.nativeElement).x;
   };
 
-  private setCanvasDefaultStyles = () => {
-    this.ctx.fillStyle = 'white';
-    this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+  /**
+   * Resets the canvas default styles.
+   */
+  private resetCanvasStyles = () => {
+    this.context.fillStyle = this.defaultSettings.bgColor;
+    this.context.fillRect(
+      0,
+      0,
+      this.context.canvas.width,
+      this.context.canvas.height
+    );
   };
 
+  /**
+   * Register all the events related to the drawing logic.
+   */
   private registerEventListeners = () => {
     this.canvasRef.nativeElement.addEventListener(
       'touchstart',
       this.start,
       false
     );
-
-    this.canvasRef.nativeElement.addEventListener(
-      'touchmove',
-      this.draw,
-      false
-    );
-
     this.canvasRef.nativeElement.addEventListener(
       'mousedown',
       this.start,
       false
     );
-
+    this.canvasRef.nativeElement.addEventListener(
+      'touchmove',
+      this.draw,
+      false
+    );
     this.canvasRef.nativeElement.addEventListener(
       'mousemove',
       this.draw,
       false
     );
-
     this.canvasRef.nativeElement.addEventListener('touchend', this.stop, false);
     this.canvasRef.nativeElement.addEventListener('mouseup', this.stop, false);
     this.canvasRef.nativeElement.addEventListener('mouseout', this.stop, false);
   };
 
-  private getX = (event: any) => event.clientX || event.touches[0].clientX;
-
-  private getY = (event: any) => event.clientY || event.touches[0].clientY;
-
-  private start = (event: any) => {
+  /**
+   * Starts drawing.
+   * @param event
+   */
+  private start = (event: MouseEvent | TouchEvent) => {
+    console.log('%c start', 'color: blue', typeof event);
     this.isDrawing = true;
 
-    this.ctx.beginPath();
+    this.context.beginPath();
 
-    this.ctx.moveTo(
-      this.getX(event) - this.getSelfPosition().x,
-      this.getY(event) - this.getSelfPosition().y
-    );
-
-    if (event.cancelable) {
-      event.preventDefault();
-    }
-  };
-
-  private draw = (event: any) => {
-    if (this.isDrawing) {
-      this.ctx.lineTo(
-        this.getX(event) - this.getSelfPosition().x,
-        this.getY(event) - this.getSelfPosition().y
+    if (event instanceof TouchEvent) {
+      this.context.moveTo(
+        this.getTouchEventPositions(event).x -
+          this.getElementPosition(this.canvasRef.nativeElement).x,
+        this.getTouchEventPositions(event).y -
+          this.getElementPosition(this.canvasRef.nativeElement).y
       );
+    } else {
+      this.context.moveTo(
+        this.getMouseEventPositions(event).x -
+          this.getElementPosition(this.canvasRef.nativeElement).x,
+        this.getMouseEventPositions(event).y -
+          this.getElementPosition(this.canvasRef.nativeElement).y
+      );
+    }
 
-      this.ctx.strokeStyle = this.drawSettings.color;
-      this.ctx.lineWidth = this.drawSettings.penWidth;
-      this.ctx.lineCap = 'round';
+    this.context.strokeStyle = this.defaultSettings.color;
+    this.context.lineWidth = this.defaultSettings.penWidth;
+    this.context.lineCap = this.defaultSettings.lineCap as CanvasLineCap;
 
-      (this.ctx as any).lineJoin = '';
-      this.ctx.stroke();
+    (this.context as any).lineJoin = '';
+    this.context.stroke();
+  };
+
+  /**
+   *
+   * @param event
+   */
+  private draw = (event: MouseEvent | TouchEvent) => {
+    console.log('%c draw', 'color: green', typeof event);
+    if (this.isDrawing) {
+      if (event instanceof TouchEvent) {
+        this.context.lineTo(
+          this.getTouchEventPositions(event).x -
+            this.getElementPosition(this.canvasRef.nativeElement).x,
+          this.getTouchEventPositions(event).y -
+            this.getElementPosition(this.canvasRef.nativeElement).y
+        );
+      } else {
+        this.context.lineTo(
+          this.getMouseEventPositions(event).x -
+            this.getElementPosition(this.canvasRef.nativeElement).x,
+          this.getMouseEventPositions(event).y -
+            this.getElementPosition(this.canvasRef.nativeElement).y
+        );
+      }
+
+      this.context.strokeStyle = this.defaultSettings.color;
+      this.context.lineWidth = this.defaultSettings.penWidth;
+      this.context.lineCap = this.defaultSettings.lineCap as CanvasLineCap;
+
+      (this.context as any).lineJoin = '';
+      this.context.stroke();
     }
 
     if (event.cancelable) {
@@ -150,10 +182,15 @@ export class DrawComponent implements AfterViewInit {
     }
   };
 
-  private stop = (event: any) => {
+  /**
+   *
+   * @param event
+   */
+  private stop = (event: MouseEvent | TouchEvent) => {
+    console.log('%c stop', 'color: red', typeof event);
     if (this.isDrawing) {
-      this.ctx.stroke();
-      this.ctx.closePath();
+      this.context.stroke();
+      this.context.closePath();
       this.isDrawing = false;
     }
 
@@ -161,9 +198,12 @@ export class DrawComponent implements AfterViewInit {
       event.preventDefault();
     }
 
-    if (event.type !== 'mouseout' || event.type !== 'touchend') {
+    if (
+      (event as MouseEvent).type !== 'mouseout' ||
+      (event as TouchEvent).type !== 'touchend'
+    ) {
       this.restoreArr.push(
-        this.ctx.getImageData(
+        this.context.getImageData(
           0,
           0,
           this.canvasRef.nativeElement.width,
@@ -174,10 +214,40 @@ export class DrawComponent implements AfterViewInit {
     }
   };
 
-  private getSelfPosition = () => {
+  private getElementPosition = (elem: HTMLElement) => {
     return {
-      x: this.canvasRef.nativeElement.offsetLeft,
-      y: this.canvasRef.nativeElement.offsetTop,
+      x: elem.getBoundingClientRect().left,
+      y: elem.getBoundingClientRect().top,
     };
+  };
+
+  /**
+   * Returns an object with both height and width of the parent of the given element.
+   * @param elem
+   * @returns
+   */
+  private getParentDimensions = (elem: HTMLElement) => {
+    return {
+      height: elem.parentElement?.offsetHeight as number,
+      width: elem.parentElement?.offsetWidth as number,
+    };
+  };
+
+  /**
+   * Returns the click coordinates of a touch event.
+   * @param event
+   * @returns
+   */
+  private getTouchEventPositions = (event: TouchEvent) => {
+    return { x: event.touches[0].clientX, y: event.touches[0].clientY };
+  };
+
+  /**
+   * Returns the click coordinates of a mouse event.
+   * @param event
+   * @returns
+   */
+  private getMouseEventPositions = (event: MouseEvent) => {
+    return { x: event.clientX, y: event.clientY };
   };
 }
