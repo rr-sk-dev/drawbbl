@@ -1,4 +1,10 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  HostListener,
+  ViewChild
+} from '@angular/core';
 
 @Component({
   selector: 'app-draw',
@@ -8,6 +14,15 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 export class DrawComponent implements AfterViewInit {
   @ViewChild('canvas', { static: true })
   canvasRef!: ElementRef<HTMLCanvasElement>;
+
+  @HostListener('window:resize', ['$event'])
+  resizeCanvas(event: any) {
+    // Dimensions
+    this.setCanvasDefaultDimensions();
+
+    // Default Styles
+    this.setCanvasDefaultStyles();
+  }
 
   ngAfterViewInit(): void {
     this.setupCanvas();
@@ -55,7 +70,7 @@ export class DrawComponent implements AfterViewInit {
     const offsetX = this.canvasRef.nativeElement.getBoundingClientRect().left;
 
     // Width
-    this.canvasRef.nativeElement.width = parentWidth;
+    this.canvasRef.nativeElement.width = parentWidth - offsetX;
 
     // Height
     this.canvasRef.nativeElement.height = parentHeight - offsetY;
@@ -104,6 +119,7 @@ export class DrawComponent implements AfterViewInit {
     this.isDrawing = true;
 
     this.ctx.beginPath();
+
     this.ctx.moveTo(
       this.getX(event) - this.getSelfPosition().x,
       this.getY(event) - this.getSelfPosition().y
@@ -160,8 +176,8 @@ export class DrawComponent implements AfterViewInit {
 
   private getSelfPosition = () => {
     return {
-      x: this.canvasRef.nativeElement.getBoundingClientRect().left,
-      y: this.canvasRef.nativeElement.getBoundingClientRect().top,
+      x: this.canvasRef.nativeElement.offsetLeft,
+      y: this.canvasRef.nativeElement.offsetTop,
     };
   };
 }
