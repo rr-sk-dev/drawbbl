@@ -62,7 +62,8 @@ export class DrawComponent implements AfterViewInit {
     // Height
     this.canvasRef.nativeElement.height =
       this.getParentDimensions(this.canvasRef.nativeElement).height -
-      this.getElementPosition(this.canvasRef.nativeElement).y;
+      document.getElementsByClassName('actions')[0].clientHeight -
+      2; // actions border
 
     // Width
     this.canvasRef.nativeElement.width =
