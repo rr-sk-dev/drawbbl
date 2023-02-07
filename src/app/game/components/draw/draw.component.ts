@@ -35,10 +35,10 @@ export class DrawComponent implements AfterViewInit {
 
   private context!: CanvasRenderingContext2D;
 
-  private defaultSettings = {
+  defaultSettings = {
     bgColor: 'white',
-    color: 'black',
-    penWidth: 2,
+    color: '#DD3636',
+    penWidth: 3,
     lineCap: 'round',
   };
 

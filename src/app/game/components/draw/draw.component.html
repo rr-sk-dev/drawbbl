@@ -12,16 +12,22 @@
       </span>
     </div>
     <div class="color-picker">
-      <!-- <i class="fa-solid fa-palette"></i> -->
-      <input #colorPicker type="color" id="color-picker" class="color-picker" />
+      <i class="fa-solid fa-palette"></i>
+      <input
+        #colorPicker
+        type="color"
+        id="color-picker"
+        class="color-picker"
+        [(ngModel)]="defaultSettings.color"
+      />
     </div>
     <div class="pen-width">
       <input
         #penWidth
         type="range"
         min="1"
-        max="30"
-        value="2"
+        max="20"
+        [(ngModel)]="defaultSettings.penWidth"
         id="color-range"
       />
     </div>
