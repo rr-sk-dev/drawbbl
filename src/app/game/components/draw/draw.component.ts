@@ -15,6 +15,18 @@ export class DrawComponent implements AfterViewInit {
   @ViewChild('canvas', { static: true })
   canvasRef!: ElementRef<HTMLCanvasElement>;
 
+  @ViewChild('undo', { static: true })
+  undoBtn!: ElementRef<HTMLSpanElement>;
+
+  @ViewChild('clear', { static: true })
+  clearBtn!: ElementRef<HTMLSpanElement>;
+
+  @ViewChild('colorPicker', { static: true })
+  colorPicker!: ElementRef<HTMLInputElement>;
+
+  @ViewChild('penWidth', { static: true })
+  penWidth!: ElementRef<HTMLInputElement>;
+
   @HostListener('window:resize')
   resizeCanvas() {
     this.resetCanvasDimension();
@@ -111,6 +123,17 @@ export class DrawComponent implements AfterViewInit {
     this.canvasRef.nativeElement.addEventListener('touchend', this.stop, false);
     this.canvasRef.nativeElement.addEventListener('mouseup', this.stop, false);
     this.canvasRef.nativeElement.addEventListener('mouseout', this.stop, false);
+
+    this.undoBtn.nativeElement.addEventListener('click', this.undo);
+    this.clearBtn.nativeElement.addEventListener('click', this.clear);
+
+    this.colorPicker.nativeElement.addEventListener('change', (ev) => {
+      this.defaultSettings.color = (ev?.target as any).value;
+    });
+
+    this.penWidth.nativeElement.addEventListener('change', (ev) => {
+      this.defaultSettings.penWidth = (ev?.target as any).value;
+    });
   };
 
   /**
@@ -118,7 +141,6 @@ export class DrawComponent implements AfterViewInit {
    * @param event
    */
   private start = (event: MouseEvent | TouchEvent) => {
-    console.log('%c start', 'color: blue', typeof event);
     this.isDrawing = true;
 
     this.context.beginPath();
@@ -152,7 +174,6 @@ export class DrawComponent implements AfterViewInit {
    * @param event
    */
   private draw = (event: MouseEvent | TouchEvent) => {
-    console.log('%c draw', 'color: green', typeof event);
     if (this.isDrawing) {
       if (event instanceof TouchEvent) {
         this.context.lineTo(
@@ -188,7 +209,6 @@ export class DrawComponent implements AfterViewInit {
    * @param event
    */
   private stop = (event: MouseEvent | TouchEvent) => {
-    console.log('%c stop', 'color: red', typeof event);
     if (this.isDrawing) {
       this.context.stroke();
       this.context.closePath();
@@ -213,6 +233,35 @@ export class DrawComponent implements AfterViewInit {
       );
       this.index += 1;
     }
+  };
+
+  private undo = (ev: MouseEvent) => {
+    if (this.index <= 0) {
+      this.clear();
+    } else {
+      this.index -= 1;
+      this.restoreArr.pop();
+      this.context.putImageData(this.restoreArr[this.index], 0, 0);
+    }
+  };
+
+  private clear = () => {
+    this.context.fillStyle = this.defaultSettings.bgColor;
+    this.context.clearRect(
+      0,
+      0,
+      this.context.canvas.width,
+      this.context.canvas.height
+    );
+    this.context.fillRect(
+      0,
+      0,
+      this.context.canvas.width,
+      this.context.canvas.height
+    );
+
+    this.restoreArr = [];
+    this.index = -1;
   };
 
   private getElementPosition = (elem: HTMLElement) => {
