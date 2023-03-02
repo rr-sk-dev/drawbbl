@@ -4,14 +4,13 @@ import { Subscription } from 'rxjs';
 import { Game } from './game.model';
 import { GamesService } from './games.service';
 
+
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.scss'],
 })
 export class GameComponent implements OnInit, OnDestroy {
-  private ctx!: CanvasRenderingContext2D;
-
   gameSubscription$!: Subscription;
   game: Game = { id: 'work in progress', users: [] };
 
